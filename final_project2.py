@@ -2,14 +2,14 @@
 Name:       Hunter Malachi S.
 CS230:      Section 6
 Data:       Skyscraper Dataset
-URL:        [Your Streamlit Cloud URL Here]
-
+URL:        https://cs230final-mqehgrevacayvkszypappqf.streamlit.app
 """
 
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import pydeck as pdk
+import seaborn as sns
 
 # [PY1] - [PY2]
 def get_top_buildings(data, column, n=10):
@@ -58,12 +58,14 @@ if tab == "Cities by Total Skyscraper Height":
     city_sum["formatted"] = city_sum["statistics.height"].apply(lambda x: f"{x:.0f} meters") # [DA1]
     city_sum = city_sum.sort_values("statistics.height", ascending=False).head(10)
 
-    st.subheader("Top 10 Cities by Total Skyscraper Height")
-    fig, ax = plt.subplots()
-    ax.barh(city_sum["location.city"], city_sum["statistics.height"], color="steelblue")
-    ax.invert_yaxis()
-    ax.set_xlabel("Total Height (meters)")
-    st.pyplot(fig)
+    # [Seaborn Plot]
+    st.subheader("Top 10 Cities by Total Skyscraper Height (Seaborn)")
+    fig2, ax2 = plt.subplots()
+    sns.barplot(data=city_sum, y="location.city", x="statistics.height", palette="viridis", ax=ax2)
+    ax2.set_xlabel("Total Height (meters)")
+    ax2.set_ylabel("City")
+    ax2.set_title("Seaborn Visualization")
+    st.pyplot(fig2)
 
 elif tab == "Tallest in United States":
     st.title("Tallest Skyscrapers by Country")
@@ -71,6 +73,10 @@ elif tab == "Tallest in United States":
     df_country = df[df["location.country"] == country]
     top_df, names, heights = get_top_buildings(df_country, "statistics.height")
 
+    '''
+    Code for pie chart based on code from ChatGPT. See section 1 of accompanying
+    document.
+    '''
     st.subheader(f"Top 10 Tallest Buildings in {country}")
     fig, ax = plt.subplots()
     ax.barh(names, heights, color="skyblue")
